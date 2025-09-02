@@ -6,11 +6,14 @@ from esphome.const import CONF_ID
 DEPENDENCIES = ['esp32_ble_tracker']
 
 a2dp_media_player_ns = cg.esphome_ns.namespace('a2dp_media_player_component')
-A2DPMediaPlayer = a2dp_media_player_ns.class_('A2DPMediaPlayer', media_player.MediaPlayer, cg.Component)
+A2DPMediaPlayer = a2dp_media_player_ns.class_('A2DPMediaPlayer',  cg.Component, media_player.MediaPlayer)
 
-CONFIG_SCHEMA = media_player.MEDIA_PLAYER_SCHEMA.extend({
-    cv.GenerateID(): cv.declare_id(A2DPMediaPlayer),
-}).extend(cv.COMPONENT_SCHEMA)
+
+CONFIG_SCHEMA = (
+    cv.Schema({cv.GenerateID(): cv.declare_id(A2DPMediaPlayer)})
+    .extend(media_player.MEDIA_PLAYER_SCHEMA)
+    .extend(cv.COMPONENT_SCHEMA)
+)
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
