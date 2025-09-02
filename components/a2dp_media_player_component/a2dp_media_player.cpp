@@ -2,33 +2,30 @@
 #include "esphome/core/log.h"
 
 namespace esphome {
-namespace a2dp_media_player {
+namespace a2dp_media_player_component {
 
 static const char *TAG = "a2dp_media_player";
 
 void A2DPMediaPlayer::setup() {
   ESP_LOGD(TAG, "Inicializando A2DP Media Player...");
-  // Configuração do I2S interno
   auto cfg = i2s_stream.defaultConfig();
   cfg.i2s_format = I2S_STD_FORMAT;
   cfg.sample_rate = 44100;
   cfg.bits_per_sample = 16;
-  cfg.channels = 2;  // Stereo
+  cfg.channels = 2;
   i2s_stream.begin(cfg);
 
-  // Callback para fornecer dados de áudio
   a2dp_source.set_data_callback_in_frames([this](Frame *data, int32_t len) -> int32_t {
     return this->get_audio_data(data, len);
   });
 
-  // Inicia A2DP Source
   std::vector<const char*> bt_names = {global_variables::get_global<std::string>("bt_device_name").c_str()};
   a2dp_source.start(bt_names);
 }
 
 void A2DPMediaPlayer::loop() {
   if (this->state == media_player::MEDIA_PLAYER_STATE_PLAYING) {
-    // Adicione lógica para streaming contínuo, se necessário
+    // Lógica para streaming contínuo, se necessário
   }
 }
 
@@ -38,7 +35,6 @@ void A2DPMediaPlayer::connect_to_speaker() {
 }
 
 int32_t A2DPMediaPlayer::get_audio_data(Frame *data, int32_t len) {
-  // Placeholder: Gerar tom de teste (seno 440Hz)
   static float phase = 0.0;
   for (int i = 0; i < len; i++) {
     int16_t sample = (int16_t)(sin(phase) * 32767.0);
@@ -76,5 +72,5 @@ void A2DPMediaPlayer::control(const media_player::MediaPlayerCall &call) {
   }
 }
 
-}  // namespace a2dp_media_player
+}  // namespace a2dp_media_player_component
 }  // namespace esphome

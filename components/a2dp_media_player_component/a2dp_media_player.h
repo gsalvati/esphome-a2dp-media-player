@@ -4,7 +4,7 @@
 #include "AudioTools.h"
 
 namespace esphome {
-namespace a2dp_media_player {
+namespace a2dp_media_player_component {
 
 class A2DPMediaPlayer : public Component, public media_player::MediaPlayer {
  public:
@@ -20,5 +20,5 @@ class A2DPMediaPlayer : public Component, public media_player::MediaPlayer {
   int32_t get_audio_data(Frame *data, int32_t len);
 };
 
-}  // namespace a2dp_media_player
+}  // namespace a2dp_media_player_component
 }  // namespace esphome
