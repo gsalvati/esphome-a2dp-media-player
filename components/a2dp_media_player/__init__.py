@@ -12,14 +12,11 @@ A2DPMediaPlayer = a2dp_media_player_ns.class_(
 )
 
 # Schema de configuração
-CONFIG_SCHEMA = media_player.MEDIA_PLAYER_SCHEMA.extend({
+CONFIG_SCHEMA = cv.polymorphic_schema('media_player', media_player.MEDIA_PLAYER_SCHEMA.extend({
     cv.GenerateID(): cv.declare_id(A2DPMediaPlayer),
-}).extend(cv.COMPONENT_SCHEMA)
+}).extend(cv.COMPONENT_SCHEMA))
 
 async def to_code(config):
-    # Criar uma variável para o componente
     var = cg.new_Pvariable(config[CONF_ID])
-    # Registrar como componente
     await cg.register_component(var, config)
-    # Registrar como media player
     await media_player.register_media_player(var, config)
