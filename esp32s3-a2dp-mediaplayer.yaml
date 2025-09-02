@@ -1,45 +1,101 @@
+substitutions:
+  name: media-portable-1
+  friendly_name: Media Player Portable 1
+
+  hidden_ssid: "false"
+  ota_password: "cb71e0d8fef0d120384a391ae0d52077"
+  key_encryption: "UT9FAyCUNGn0oZyr+lBKSPJdSnWHOTftsPmo0MDWITY="
+
 esphome:
-  name: esp32-s3-media-player
-  friendly_name: ESP32 S3 Media Player
+  name: ${name}
+  friendly_name: ${friendly_name}
   platformio_options:
     board_build.mcu: esp32s3
     board_build.variant: esp32s3
+    # Adiciona dependências externas via PlatformIO
     board_build.extra_flags:
-      - "-DARDUINO_ESP32_A2DP"
+      - "-DARDUINO_ESP32_A2DP"  # Define para compilação da lib
     lib_deps:
-      - https://github.com/pschatzmann/ESP32-A2DP.git#master
-      - https://github.com/pschatzmann/arduino-audio-tools.git#master
+      - https://github.com/pschatzmann/ESP32-A2DP.git#main
+      - https://github.com/pschatzmann/arduino-audio-tools.git#main
 
 esp32:
   board: esp32-s3-devkitc-1
+  cpu_frequency: 240MHz
+  variant: esp32s3
+  flash_size: 16MB
   framework:
-    type: esp-idf
+    type: esp-idf  # Usamos IDF para compatibilidade com ESP32-A2DP
     version: recommended
+    #version: 5.1.2
+    sdkconfig_options:
+      CONFIG_ESP32S3_DATA_CACHE_64KB: "y"
+      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: "y"
+      CONFIG_ESP32S3_INSTRUCTION_CACHE_32KB: "y"
+      CONFIG_SPIRAM_RODATA: "y"
+      CONFIG_SPIRAM_FETCH_INSTRUCTIONS: "y"
+      CONFIG_BT_ALLOCATION_FROM_SPIRAM_FIRST: "y"
+      CONFIG_BT_BLE_DYNAMIC_ENV_MEMORY: "y"
+      CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC: "y"
+      CONFIG_MBEDTLS_SSL_PROTO_TLS1_3: "y"  # TLS1.3 support isn't enabled by default in IDF 5.1.5
 
-esp32_ble_tracker:
-bluetooth_proxy:
+wifi:
+  id: wifi_id
+  fast_connect: ${hidden_ssid}
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  #on_connect:
+  #on_disconnect:
+  ap:
+    ssid: "Media Player Portable 1 Hotspot"
+    password: "CBf7hRUgrc1x"
 
+api:
+  id: api_id
+  encryption:
+    key: ${key_encryption}
+
+ota:
+  - platform: esphome
+    id: ota_esphome
+    password: ${ota_password}
+
+# Ativa Bluetooth (necessário para A2DP)
+esp32_ble_tracker:  # Para BLE, mas A2DP usa Classic; ative para scanning se precisar
+#bluetooth_proxy:  # Opcional, para proxy Bluetooth
+
+# Custom component para o media player com A2DP
 external_components:
-  - source: github://<seu-username>/esphome-a2dp-media-player@master
-    components: [a2dp_media_player]
+  - source: github://gsalvati/esphome-a2dp-media-player@main
+    components: [ad2pmp]
 
 globals:
   - id: bt_device_name
     type: std::string
-    initial_value: '"MyESP32Speaker"'
+    initial_value: '"KA-8878"'  # Nome do Bluetooth para conectar ao speaker
 
 media_player:
-  - platform: a2dp_media_player
+  - platform: ad2pmp
     id: a2dp_media_player
     name: A2DP Media Player
+    
+# Exemplo de fonte de áudio: TTS para teste (saída vai para A2DP)
+#voice_assistant:
+#  microphone: ...  # Configure se quiser input
+#  speaker: ...  # Mas usaremos o custom media player para output
 
+# Opcional: Botão para conectar/desconectar Bluetooth
 button:
   - platform: template
     name: Connect Bluetooth Speaker
     on_press:
-      then:
-        - lambda: |-
-            id(a2dp_media_player)->connect_to_speaker();
+      - logger.log: "Paring..."
+#      then:
+#        - lambda: |-
+#            id(a2dp_media_player)->connect_to_speaker();  # Chama método custom
 
 logger:
-  level: DEBUG
+  level: debug
+  initial_level: debug
+  logs:
+    sensor: WARN  # avoids logging debug sensor updates
