@@ -2,7 +2,7 @@
 #include "esphome/core/log.h"
 
 namespace esphome {
-namespace a2dp_media_player_component {
+namespace ad2pmp {
 
 static const char *TAG = "a2dp_media_player";
 
@@ -72,5 +72,5 @@ void A2DPMediaPlayer::control(const media_player::MediaPlayerCall &call) {
   }
 }
 
-}  // namespace a2dp_media_player_component
+}  // namespace ad2pmp
 }  // namespace esphome

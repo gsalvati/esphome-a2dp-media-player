@@ -5,7 +5,7 @@ from esphome.const import CONF_ID
 
 DEPENDENCIES = ['esp32_ble_tracker']
 
-a2dp_media_player_ns = cg.esphome_ns.namespace('a2dp_media_player_component')
+a2dp_media_player_ns = cg.esphome_ns.namespace('ad2pmp')
 A2DPMediaPlayer = a2dp_media_player_ns.class_('A2DPMediaPlayer',  cg.Component, media_player.MediaPlayer)
 
 
