@@ -1,10 +1,10 @@
-#include "a2dp_media_player.h"
+#include "ad2pmp.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
 namespace ad2pmp {
 
-static const char *TAG = "a2dp_media_player";
+static const char *TAG = "ad2pmp";
 
 void A2DPMediaPlayer::setup() {
   ESP_LOGD(TAG, "Inicializando A2DP Media Player...");
