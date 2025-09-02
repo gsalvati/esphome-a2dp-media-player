@@ -1,0 +1,45 @@
+esphome:
+  name: esp32-s3-media-player
+  friendly_name: ESP32 S3 Media Player
+  platformio_options:
+    board_build.mcu: esp32s3
+    board_build.variant: esp32s3
+    board_build.extra_flags:
+      - "-DARDUINO_ESP32_A2DP"
+    lib_deps:
+      - https://github.com/pschatzmann/ESP32-A2DP.git#master
+      - https://github.com/pschatzmann/arduino-audio-tools.git#master
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+    version: recommended
+
+esp32_ble_tracker:
+bluetooth_proxy:
+
+external_components:
+  - source: github://<seu-username>/esphome-a2dp-media-player@master
+    components: [a2dp_media_player]
+
+globals:
+  - id: bt_device_name
+    type: std::string
+    initial_value: '"MyESP32Speaker"'
+
+media_player:
+  - platform: a2dp_media_player
+    id: a2dp_media_player
+    name: A2DP Media Player
+
+button:
+  - platform: template
+    name: Connect Bluetooth Speaker
+    on_press:
+      then:
+        - lambda: |-
+            id(a2dp_media_player)->connect_to_speaker();
+
+logger:
+  level: DEBUG
