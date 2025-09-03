@@ -13,14 +13,14 @@ CONFIG_SCHEMA = cv.All(
         cv.GenerateID(): cv.declare_id(A2DPMediaPlayer),
     }).extend(cv.COMPONENT_SCHEMA),
 
-    cv.require_library(
-        name="ESP32-A2DP",
-        owner="pschatzmann",
-    ),
-    cv.require_library(
-        name="arduino-audio-tools",
-        owner="pschatzmann"
-    )
+    #cv.require_library(
+    #    name="ESP32-A2DP",
+    #    owner="pschatzmann",
+    #),
+    #cv.require_library(
+    #    name="arduino-audio-tools",
+    #    owner="pschatzmann"
+    #)
 )
 
 async def to_code(config):
